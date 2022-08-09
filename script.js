@@ -1,18 +1,21 @@
+
 let comenzo = false;
 let tap = new Audio ("tap.mp3");
+
 
 Vue.component("tiempo",{
     template: 
     `
     <div>
     <button class="btn btn-info btn-sm" @click="resetearIntervalo">Reset</button>
-    <button class="btn btn-info btn-sm" @click="comenzarCronometro">{{minuto}}:{{segundo}}</button>
+    <button class="btn btn-info btn-sm" @click="comenzarCronometro">{{hora}}:{{minuto}}:{{segundo}}</button>
     </div>
     `,
     data(){
         return{
             segundo: 0,
-            minuto: 0
+            minuto: 0,
+            hora: 0
         }
     },
     methods: {
@@ -33,9 +36,10 @@ Vue.component("tiempo",{
             
                     if(this.segundo >= 60){
                         this.segundo = 0;
-                        this.minuto ++
+                        this.minuto += 1;
                     } else if(this.minuto >= 60){
-                        clearInterval(tic);
+                        this.minuto = 0;
+                        this.hora += 1;
                     } else if( comenzo == false){
                         clearInterval(tic);
                     }
@@ -52,13 +56,24 @@ Vue.component("tiempo",{
         
             localStorage.setItem('datos-v', JSON.stringify(this.tareas));
         }
-    }
+    },
+        created: function(){
+
+            let datosLS = JSON.parse(localStorage.getItem('datos-v'));
+        
+            if (datosLS === null){
+        
+                this.tareas = [];
+        
+            }else{
+        
+                this.tareas = datosLS;
+        
+            }
+        
+    }    
     
 })
-
-
-
-
 
 
 const app = new Vue({
@@ -66,13 +81,12 @@ el: "#app",
 data: {
     titulo: "Tareas cronometradas",
     tareas: [],
-    nuevaTarea: "",
-    //Cronometro
+    nuevaTarea: ""
 },
 
 methods:{
 agregarTarea: function(){
-    
+     console.log(this.tareas)
     tap.play();
 
     this.tareas.push({
