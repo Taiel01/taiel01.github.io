@@ -1,12 +1,73 @@
-
+let comenzo = false;
 let tap = new Audio ("tap.mp3");
+
+Vue.component("tiempo",{
+    template: 
+    `
+    <div>
+    <button class="btn btn-info btn-sm" @click="resetearIntervalo">Reset</button>
+    <button class="btn btn-info btn-sm" @click="comenzarCronometro">{{minuto}}:{{segundo}}</button>
+    </div>
+    `,
+    data(){
+        return{
+            segundo: 0,
+            minuto: 0
+        }
+    },
+    methods: {
+        comenzarCronometro: function(){
+
+            tap.play();
+        
+            if (comenzo == true) {
+                comenzo = false;
+            } else{
+                comenzo = true;
+            }
+        
+            if(comenzo == true){
+                var tic = setInterval(() => {
+        
+                    this.segundo ++;
+            
+                    if(this.segundo >= 60){
+                        this.segundo = 0;
+                        this.minuto ++
+                    } else if(this.minuto >= 60){
+                        clearInterval(tic);
+                    } else if( comenzo == false){
+                        clearInterval(tic);
+                    }
+                   }, 1000);
+                }
+        
+            localStorage.setItem('datos-v', JSON.stringify(this.tareas));
+        },
+        resetearIntervalo: function(){
+            tap.play();
+        
+            this.segundo = 0;
+            this.minuto = 0;
+        
+            localStorage.setItem('datos-v', JSON.stringify(this.tareas));
+        }
+    }
+    
+})
+
+
+
+
+
 
 const app = new Vue({
 el: "#app",
 data: {
-    titulo: "Tareas",
+    titulo: "Tareas cronometradas",
     tareas: [],
-    nuevaTarea: ""
+    nuevaTarea: "",
+    //Cronometro
 },
 
 methods:{
@@ -61,3 +122,5 @@ if (datosLS === null){
 
 }
 });
+
+
